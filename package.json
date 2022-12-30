@@ -2,7 +2,7 @@
   "name": "crawler",
   "version": "1.0.0",
   "description": "",
-  "main": "node_service.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
