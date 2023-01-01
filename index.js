@@ -5,6 +5,15 @@ import { cpus } from 'os';
 import process from 'process';
 import { url } from "./url.js";
 import { MongoClient } from "mongodb";
+import express from "express";
+const app=express();
+var port=process.env.PORT || 7800;
+app.listen(port,()=>{
+    console.log("server connected");
+});
+app.get('/',(req,res)=>{
+    res.send("welcome to render");
+})
 var path = process.env.MONGO_URL || url;
 // VARIABLE TO CHECK IF THERE IS A NEED TO FORK A WORKER
 var fork = false;
