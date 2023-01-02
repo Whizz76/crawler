@@ -54,6 +54,10 @@ const crawler = new PlaywrightCrawler({
 
 log.debug('Adding requests to the queue.');
  if(cluster.isPrimary){
+     // Fork workers.
+        for (let i = 0; i < numCPUs; i++) {
+            cluster.fork();
+        }
         cluster.on('exit', async (worker, code, signal) => {
             console.log(`worker ${worker.process.pid} died`);
             // IF THERE EXISTS A LINK/LINKS THAT'S STILL NOT PROCESSED THEN FORK A WORKER/CLUSTER
@@ -72,12 +76,6 @@ app.get('/master',async (req,res)=>{
         console.log(`Master ${process.pid} is running`);
         await crawler.addRequests([{ url: 'https://www.myntra.com/', label: "MYNTRA" }, { url: 'https://www2.hm.com/en_in/index.html', label: "HNM" }]);
         await crawler.run();
-    
-        // Fork workers.
-        for (let i = 0; i < numCPUs; i++) {
-            cluster.fork();
-        }
-        // WHENEVER A WORKER DIES THIS WILL GET EXECUTED!
     }
 });
 app.get('/worker',async (req,res)=>{
