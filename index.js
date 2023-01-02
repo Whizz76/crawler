@@ -7,8 +7,11 @@ import { url } from "./url.js";
 import { MongoClient } from "mongodb";
 import express from "express";
 const app=express();
-var port=process.env.PORT || 7800;
-var path = url;
+var path = process.env.MONGO_URL || url;
+const port=process.env.PORT || 8900;
+app.listen(port,()=>{
+    console.log("server connected");
+})
 // VARIABLE TO CHECK IF THERE IS A NEED TO FORK A WORKER
 var fork = false;
 // CONNECTING TO THE DATABASE THAT CONTAINS ALL THE LINKS THAT NEEDS TO BE DEPLOYED
@@ -50,40 +53,39 @@ const crawler = new PlaywrightCrawler({
 });
 
 log.debug('Adding requests to the queue.');
-// IF OUR PROCESS IS MASTER THEN ADD LINKS TO DATABASE, FORK WORKERS
-if (cluster.isPrimary) {
-    console.log(`Number of CPUs is ${numCPUs}`);
-    console.log(`Master ${process.pid} is running`);
-    await crawler.addRequests([{ url: 'https://www.myntra.com/', label: "MYNTRA" }, { url: 'https://www2.hm.com/en_in/index.html', label: "HNM" }]);
-    await crawler.run();
-
-    // Fork workers.
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
+ if(cluster.isPrimary){
+        cluster.on('exit', async (worker, code, signal) => {
+            console.log(`worker ${worker.process.pid} died`);
+            // IF THERE EXISTS A LINK/LINKS THAT'S STILL NOT PROCESSED THEN FORK A WORKER/CLUSTER
+            await findOne();
+            if (fork) {
+                cluster.fork();
+            }
+    
+    
+        });
     }
-    // WHENEVER A WORKER DIES THIS WILL GET EXECUTED!
-    cluster.on('exit', async (worker, code, signal) => {
-        console.log(`worker ${worker.process.pid} died`);
-        // IF THERE EXISTS A LINK/LINKS THAT'S STILL NOT PROCESSED THEN FORK A WORKER/CLUSTER
-        await findOne();
-        if (fork) {
+app.get('/master',async (req,res)=>{
+    res.send(`Master ${process.pid} is running`);
+    if (cluster.isPrimary) {
+        console.log(`Number of CPUs is ${numCPUs}`);
+        console.log(`Master ${process.pid} is running`);
+        await crawler.addRequests([{ url: 'https://www.myntra.com/', label: "MYNTRA" }, { url: 'https://www2.hm.com/en_in/index.html', label: "HNM" }]);
+        await crawler.run();
+    
+        // Fork workers.
+        for (let i = 0; i < numCPUs; i++) {
             cluster.fork();
         }
-
-
-    });
-}
-// IF OUR PROCESS IS WORKER THEN START CRAWLING
-else {
-    app.listen(port,()=>{
-    console.log("server connected");
+        // WHENEVER A WORKER DIES THIS WILL GET EXECUTED!
+    }
 });
-app.get('/',(req,res)=>{
-    res.send("welcome to render");
+app.get('/worker',async (req,res)=>{
+    res.send(`Worker ${process.pid} started`);
+    if(cluster.isWorker){
+        await crawler.addRequests([{ url: "https://www.myntra.com/rain-jacket", label: "MYNTRA CATEGORY|PAGE" }, { url: 'https://www2.hm.com/en_in/women/seasonal-trending/holiday.html', label: "HNM CATEGORY|PAGE" }]);
+        await crawler.run();
+        // AFTER CRAWLING IS DONE EXIT THE PROCESS
+        process.exit(0);
+    }
 })
-    await crawler.addRequests([{ url: "https://www.myntra.com/rain-jacket", label: "MYNTRA CATEGORY|PAGE" }, { url: 'https://www2.hm.com/en_in/women/seasonal-trending/holiday.html', label: "HNM CATEGORY|PAGE" }]);
-    await crawler.run();
-    // AFTER CRAWLING IS DONE EXIT THE PROCESS
-    process.exit(0);
-
-}
