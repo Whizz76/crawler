@@ -72,19 +72,37 @@ log.debug('Adding requests to the queue.');
 app.get('/',async (req,res)=>{
     res.send("Welcome to Render!");
 });
-app.get('/master',async (req,res)=>{
+app.get('/masterH&M',async (req,res)=>{
     res.send(`Master ${process.pid} is running`);
     if (cluster.isPrimary) {
         console.log(`Number of CPUs is ${numCPUs}`);
         console.log(`Master ${process.pid} is running`);
-        await crawler.addRequests([{ url: 'https://www.myntra.com/', label: "MYNTRA" }, { url: 'https://www2.hm.com/en_in/index.html', label: "HNM" }]);
+        await crawler.addRequests([{ url: 'https://www2.hm.com/en_in/index.html', label: "HNM" }]);
         await crawler.run();
     }
 });
-app.get('/worker',async (req,res)=>{
+app.get('/masterMyntra',async (req,res)=>{
+    res.send(`Master ${process.pid} is running`);
+    if (cluster.isPrimary) {
+        console.log(`Number of CPUs is ${numCPUs}`);
+        console.log(`Master ${process.pid} is running`);
+        await crawler.addRequests([{ url: 'https://www.myntra.com/', label: "MYNTRA" }]);
+        await crawler.run();
+    }
+});
+app.get('/workerH&M',async (req,res)=>{
     res.send(`Worker ${process.pid} started`);
     if(cluster.isWorker){
-        await crawler.addRequests([{ url: "https://www.myntra.com/rain-jacket", label: "MYNTRA CATEGORY|PAGE" }, { url: 'https://www2.hm.com/en_in/women/seasonal-trending/holiday.html', label: "HNM CATEGORY|PAGE" }]);
+        await crawler.addRequests([{ url: 'https://www2.hm.com/en_in/women/seasonal-trending/holiday.html', label: "HNM CATEGORY|PAGE" }]);
+        await crawler.run();
+        // AFTER CRAWLING IS DONE EXIT THE PROCESS
+        process.exit(0);
+    }
+})
+app.get('/workerMyntra',async (req,res)=>{
+    res.send(`Worker ${process.pid} started`);
+    if(cluster.isWorker){
+        await crawler.addRequests([{ url: "https://www.myntra.com/rain-jacket", label: "MYNTRA CATEGORY|PAGE" }]);
         await crawler.run();
         // AFTER CRAWLING IS DONE EXIT THE PROCESS
         process.exit(0);
