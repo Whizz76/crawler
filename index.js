@@ -58,16 +58,6 @@ log.debug('Adding requests to the queue.');
         for (let i = 0; i < numCPUs; i++) {
             cluster.fork();
         }
-        cluster.on('exit', async (worker, code, signal) => {
-            console.log(`worker ${worker.process.pid} died`);
-            // IF THERE EXISTS A LINK/LINKS THAT'S STILL NOT PROCESSED THEN FORK A WORKER/CLUSTER
-            await findOne();
-            if (fork) {
-                cluster.fork();
-            }
-    
-    
-        });
     }
 app.get('/',async (req,res)=>{
     res.send("Welcome to Render!");
@@ -101,6 +91,18 @@ app.get('/workerH&M',async (req,res)=>{
 })
 app.get('/workerMyntra',async (req,res)=>{
     res.send(`Worker ${process.pid} started`);
+    if(cluster.isPrimary){
+        cluster.on('exit', async (worker, code, signal) => {
+            console.log(`worker ${worker.process.pid} died`);
+            // IF THERE EXISTS A LINK/LINKS THAT'S STILL NOT PROCESSED THEN FORK A WORKER/CLUSTER
+            await findOne();
+            if (fork) {
+                cluster.fork();
+            }
+    
+    
+        });
+    }
     if(cluster.isWorker){
         await crawler.addRequests([{ url: "https://www.myntra.com/rain-jacket", label: "MYNTRA CATEGORY|PAGE" }]);
         await crawler.run();
