@@ -69,6 +69,9 @@ log.debug('Adding requests to the queue.');
     
         });
     }
+app.get('/',(req,res)=>{
+    res.send("Welcome to Render!");
+});
 app.get('/master',async (req,res)=>{
     res.send(`Master ${process.pid} is running`);
     if (cluster.isPrimary) {
