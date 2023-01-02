@@ -8,13 +8,7 @@ import { MongoClient } from "mongodb";
 import express from "express";
 const app=express();
 var port=process.env.PORT || 7800;
-app.listen(port,()=>{
-    console.log("server connected");
-});
-app.get('/',(req,res)=>{
-    res.send("welcome to render");
-})
-var path = process.env.MONGO_URL || url;
+var path = url;
 // VARIABLE TO CHECK IF THERE IS A NEED TO FORK A WORKER
 var fork = false;
 // CONNECTING TO THE DATABASE THAT CONTAINS ALL THE LINKS THAT NEEDS TO BE DEPLOYED
@@ -81,6 +75,12 @@ if (cluster.isPrimary) {
 }
 // IF OUR PROCESS IS WORKER THEN START CRAWLING
 else {
+    app.listen(port,()=>{
+    console.log("server connected");
+});
+app.get('/',(req,res)=>{
+    res.send("welcome to render");
+})
     await crawler.addRequests([{ url: "https://www.myntra.com/rain-jacket", label: "MYNTRA CATEGORY|PAGE" }, { url: 'https://www2.hm.com/en_in/women/seasonal-trending/holiday.html', label: "HNM CATEGORY|PAGE" }]);
     await crawler.run();
     // AFTER CRAWLING IS DONE EXIT THE PROCESS
