@@ -1,14 +1,14 @@
 {
   "name": "crawler",
   "version": "1.0.0",
-  "description": "",
+  "description": "Crawler service",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start":"node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Its not you, its me",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.2.1",
@@ -23,6 +23,6 @@
     "mongodb": "^4.12.1",
     "mongoose": "^6.8.0",
     "node-fetch": "^3.3.0",
-    "playwright": "^1.28.1"
+    "playwright": "*"
   }
 }
