@@ -69,7 +69,7 @@ log.debug('Adding requests to the queue.');
     
         });
     }
-app.get('/',(req,res)=>{
+app.get('/',async (req,res)=>{
     res.send("Welcome to Render!");
 });
 app.get('/master',async (req,res)=>{
