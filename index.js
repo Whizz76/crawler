@@ -61,11 +61,11 @@ if (cluster.isPrimary) {
     cluster.on('exit', async (worker, code, signal) => {
         console.log(`worker ${worker.process.pid} died`);
         // IF THERE EXISTS A LINK/LINKS THAT'S STILL NOT PROCESSED THEN FORK A WORKER/CLUSTER
-        /*await findOne();
+        await findOne();
         if (fork) {
             cluster.fork();
-        }*/
-        cluster.fork();
+        }
+     
 
     });
 }
