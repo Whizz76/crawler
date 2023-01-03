@@ -210,8 +210,8 @@ router.addHandler('MYNTRA CATEGORY|PAGE', async ({ request, page, enqueueLinks, 
 router.addHandler('MYNTRA', async ({ request, page, enqueueLinks, log }) => {
     console.log("started myntra crawl");
     const start = Date.now();
-    log.debug(`Proessing start request: ${request.url}`);
     const $ = cheerio.load(await page.content());
+    console.log($("title").text());
     //await page.waitForSelector('.desktop-categoryName', { state: 'hidden', timeout: 0 });
    // await page.waitForSelector('.desktop-categoryLink', { state: 'hidden', timeout: 0 });
     // VARIABLE TO STORE LINKS THAT NEEDS TO BE CRAWLED
