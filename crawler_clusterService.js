@@ -1,13 +1,12 @@
 import { createPlaywrightRouter } from 'crawlee';
 import * as cheerio from "cheerio";
 import _ from "lodash";
-import { url } from "./url.js";
 import { MongoClient } from "mongodb";
 import cluster from 'cluster';
 import { cpus } from 'os';
 // STORES THE NUMBER OF CPUS WE WILL BE USING, HERE WE ARE USING HALF THE NUMBER I.E 4
 const numCPUs = (cpus().length) / 2;
-var path=process.env.MONGO_URL || url;
+var path=process.env.MONGO_URL;
 // CONNECT TO THE MONOGODB
 export const client = new MongoClient(path, { useNewUrlParser: true, useUnifiedTopology: true });
 
