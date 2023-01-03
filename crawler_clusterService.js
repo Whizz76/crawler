@@ -211,15 +211,22 @@ router.addHandler('MYNTRA', async ({ request, page, enqueueLinks, log }) => {
     console.log("started myntra crawl");
     const start = Date.now();
     const $ = cheerio.load(await page.content());
-    await page.waitForSelector('.desktop-backdropStyle', { state: 'hidden', timeout: 0 });
-    await page.waitForSelector('.desktop-categoryName', { state: 'hidden', timeout: 0 });
-    await page.waitForSelector('.desktop-categoryLink', { state: 'hidden', timeout: 0 });
+   // await page.waitForSelector('.desktop-backdropStyle', { state: 'hidden', timeout: 0 });
+    //await page.waitForSelector('.desktop-categoryName', { state: 'hidden', timeout: 0 });
+    //await page.waitForSelector('.desktop-categoryLink', { state: 'hidden', timeout: 0 });
+    const urls2 = page.locator(".desktop-categoryLink");
+        const len2 = await urls2.count();
+        for (let i = 0; i < len2; i++) {
+            const element = urls2.nth(i);
+            const url = await element.getAttribute('href');
+            console.log(url);
+        }
     // VARIABLE TO STORE LINKS THAT NEEDS TO BE CRAWLED
     var links = [];
     $(".desktop-navLinks").children(".desktop-navContent").children(".desktop-navLink").children("a").each((index, element) => {
         // VARIABLE TO STORE THE PARENT CATEGORY
         var t = $(element).text();
-        console.log(t);
+        console.log(t);  
         // ADD ONLY LINKS THAT BELONG TO MEN,WOMEN,KIDS CATEGORIES I.E SKIP BEAUTY,HOME,STUDIO ETC. CATEGORIES
         if (t == "Men" || t == "Women" || t == "Kids") {
             $(element).siblings(".desktop-backdropStyle").children(".desktop-paneContent").children(".desktop-categoryContainer").children("li").children("ul").children("li").children("a").each((i, e) => {
