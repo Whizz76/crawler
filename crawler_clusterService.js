@@ -211,7 +211,8 @@ router.addHandler('MYNTRA', async ({ request, page, enqueueLinks, log }) => {
     console.log("started myntra crawl");
     const start = Date.now();
     const $ = cheerio.load(await page.content());
-    console.log("title",$("title").text());
+    const title=await page.title();
+    console.log("title",title);
    // await page.waitForSelector('.desktop-backdropStyle', { state: 'hidden', timeout: 0 });
     await page.waitForSelector('.desktop-categoryName', { state: 'hidden', timeout: 0 });
     await page.waitForSelector('.desktop-categoryLink', { state: 'hidden', timeout: 0 });
