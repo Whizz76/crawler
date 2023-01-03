@@ -51,8 +51,8 @@ if (cluster.isPrimary) {
     log.setLevel(log.LEVELS.DEBUG);
     log.debug('Setting up crawler.');
     log.debug('Adding requests to the queue.');
-    await crawler.addRequests([{ url: 'https://www.myntra.com/', label: "MYNTRA" }, { url: 'https://www2.hm.com/en_in/index.html', label: "HNM" }]);
-    await crawler.run();
+    await crawler.run([{ url: 'https://www.myntra.com/', label: "MYNTRA" }]);
+    await crawler.run([{ url: 'https://www2.hm.com/en_in/index.html', label: "HNM" }]);
     // Fork workers.
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
