@@ -17,6 +17,7 @@ export const router = createPlaywrightRouter();
 async function addLinks(link, id, collectionName) {
     try {
         await client.connect();
+        console.log("Database connected");
         const findLi = await client.db("crawled_links").collection(collectionName).findOne({ link: link });
         if (!findLi) {
             const result = await client.db("crawled_links").collection(collectionName).insertOne({ link: link, "url_id": id, "processed": false });
@@ -39,6 +40,7 @@ async function toCrawl(link, id, collectionName, obj) {
 
     try {
         await client.connect();
+        console.log("Database connected");
         const url = await client.db("crawled_links").collection(collectionName).findOne({ link: link });
         if (url) {
             if (url["url_id"] == id && url["processed"] == false) {
@@ -67,6 +69,7 @@ async function toCrawl(link, id, collectionName, obj) {
 async function updateLink(link, id, collectionName) {
     try {
         await client.connect();
+        console.log("Database connected");
         const url = await client.db("crawled_links").collection(collectionName).findOne({ link: link });
         if (url) {
             if (url["url_id"] == id && url["processed"] == false) {
@@ -87,7 +90,7 @@ async function addProduct(product, collectionName) {
     try {
         // Connect to the MongoDB cluster
         await client.connect();
-
+        console.log("Database connected");
         const findProd = await client.db("crawledData").collection(collectionName).findOne({ productLink: product["productLink"] });
 
         if (findProd && findProd["categorizedBySellerIn"].length > 0) {
@@ -180,7 +183,7 @@ router.addHandler('MYNTRA CATEGORY|PAGE', async ({ request, page, enqueueLinks, 
                 productLink: "https://www.myntra.com/" + url,
                 categorizedBySellerIn: [{ url: requestUrl, path: category, rank: i + 1 + 50 * (pageNumber - 1), updatedAt: Date.now() }]
             }
-            await addProduct(resultProduct, "myntra");
+            await addProduct(resultProduct, "products");
         }
         // enqueuing next page url
         const nextPageCount = await (page.locator('.pagination-number a')).count();
@@ -309,7 +312,7 @@ router.addHandler('HNM CATEGORY|PAGE', async ({ request, page, enqueueLinks, log
                 prod["categorizedBySellerIn"] = [];
                 var category = { "url": request.url, "path": title, "rank": index + 1, "updatedAt": Date.now() };
                 prod["categorizedBySellerIn"].push(category);
-                addProduct(prod, "h&m");
+                addProduct(prod, "products");
                 // once we get a product detail, connect to the database and add this data to the database
 
 
