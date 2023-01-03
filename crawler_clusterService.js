@@ -211,6 +211,8 @@ router.addHandler('MYNTRA', async ({ request, page, enqueueLinks, log }) => {
     const start = Date.now();
     log.debug(`Proessing start request: ${request.url}`);
     const $ = cheerio.load(await page.content());
+    await page.waitForSelector('.desktop-categoryName', { state: 'hidden', timeout: 0 });
+    await page.waitForSelector('.desktop-categoryLink', { state: 'hidden', timeout: 0 });
     // VARIABLE TO STORE LINKS THAT NEEDS TO BE CRAWLED
     var links = [];
     $(".desktop-navLinks").children(".desktop-navContent").children(".desktop-navLink").children("a").each((index, element) => {
@@ -229,6 +231,7 @@ router.addHandler('MYNTRA', async ({ request, page, enqueueLinks, log }) => {
         log.debug(`Proessing start request: ${request.url}`);
         for (let i = 0; i < links.length; i++) {
             var lid = i % numCPUs;
+            console.log(`adding link ${links[i]}`);
             await addLinks(links[i], lid, "links");
         }
 
@@ -373,6 +376,7 @@ router.addHandler('HNM', async ({ request, page, enqueueLinks, log }) => {
     if (cluster.isPrimary) {
         for (let i = 0; i < links.length; i++) {
             var lid = i % numCPUs;
+            console.log(`adding link ${links[i]}`);
             await addLinks(links[i], lid, "links");
         }
 
