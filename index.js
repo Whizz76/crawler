@@ -3,11 +3,10 @@ import { router } from './crawler_clusterService.js';
 import cluster from 'cluster';
 import { cpus } from 'os';
 import process from 'process';
-import { url } from "./url.js";
 import { MongoClient } from "mongodb";
 import express from "express";
 const app=express();
-var path = process.env.MONGO_URL || url;
+var path = process.env.MONGO_URL;
 const port=process.env.PORT || 10000;
 // VARIABLE TO CHECK IF THERE IS A NEED TO FORK A WORKER
 var fork = false;
@@ -16,6 +15,7 @@ const cl = new MongoClient(path, { useNewUrlParser: true, useUnifiedTopology: tr
 // FUNCTION TO CHECK IF THERE EXISTS ANY LINK THAT'S STILL NOT PROCESSED
 async function findOne() {
     try {
+        cl.connect();
         const find = await cl.db("crawled_links").collection("links").findOne({ processed: false });
         // IF THERE EXISTS AN UNPROCESSED LINK THEN SET FORK TO TRUE ELSE FALSE
         if (find) {
