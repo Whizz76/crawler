@@ -222,6 +222,7 @@ router.addHandler('MYNTRA', async ({ request, page, enqueueLinks, log }) => {
         if (t == "Men" || t == "Women" || t == "Kids") {
             $(element).siblings(".desktop-backdropStyle").children(".desktop-paneContent").children(".desktop-categoryContainer").children("li").children("ul").children("li").children("a").each((i, e) => {
                 links.push("https://www.myntra.com" + $(e).attr("href"));
+                console.log(`added ${"https://www.myntra.com" + $(e).attr("href")}`);
             });
 
         }
