@@ -79,16 +79,18 @@ else {
     app.listen(port, () => {
         console.log("server connected");
     })
-    app.get('/', async (req, res) => {
-        res.send("workers started!");
-        console.log(`Worker ${process.pid} is running`);
-        log.setLevel(log.LEVELS.DEBUG);
+    log.setLevel(log.LEVELS.DEBUG);
         log.debug('Setting up crawler.');
         log.debug('Adding requests to the queue.');
         await crawler.addRequests([{ url: "https://www.myntra.com/rain-jacket", label: "MYNTRA CATEGORY|PAGE" }, { url: 'https://www2.hm.com/en_in/women/seasonal-trending/holiday.html', label: "HNM CATEGORY|PAGE" }]);
         await crawler.run();
-        // AFTER CRAWLING IS DONE EXIT THE PROCESS
+    // AFTER CRAWLING IS DONE EXIT THE PROCESS
         process.exit(0);
+    app.get('/', async (req, res) => {
+        res.send("workers started!");
+        console.log(`Worker ${process.pid} is running`);
+        
+        
 
     })
 
