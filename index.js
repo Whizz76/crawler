@@ -33,6 +33,12 @@ async function findOne() {
 // NUMBER OF CORES THAT WE WILL USE
 const numCPUs = (cpus().length) / 2;
 const crawler = new PlaywrightCrawler({
+    launchContext: {
+        // Here you can set options that are passed to the playwright .launch() function.
+        launchOptions: {
+            headless: true,
+        },
+    },
     useSessionPool: true,
     persistCookiesPerSession: true,
 
