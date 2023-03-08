@@ -1,1 +1,1 @@
-export const url="mongodb+srv://loop:loop@cluster0.k3zvfbv.mongodb.net/?retryWrites=true&w=majority";
+export const url="add connection string here...";
